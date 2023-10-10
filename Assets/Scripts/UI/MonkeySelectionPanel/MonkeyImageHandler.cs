@@ -6,15 +6,17 @@ using UnityEngine.UI;
 
 namespace ServiceLocator.UI
 {
-    public class MonkeyImageHandler : MonoBehaviour, IPointerDownHandler, IDragHandler, IEndDragHandler
+    public class MonkeyImageHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IPointerDownHandler
     {
-        private RectTransform rectTransform;
         private Image monkeyImage;
         private MonkeyCellController owner;
-
         private Sprite spriteToSet;
-        private Vector2 originalAnchoredPosition;
+        private RectTransform rectTransform;
+        private CanvasGroup canvasGroup;
         private Vector3 originalPosition;
+        private Vector3 originalAnchoredPosition;
+        private Vector3 mouseStartPoint;
+        private bool isDragging;
 
         public void ConfigureImageHandler(Sprite spriteToSet, MonkeyCellController owner)
         {
@@ -22,36 +24,57 @@ namespace ServiceLocator.UI
             this.owner = owner;
         }
 
+        void Update()
+        {
+            if (!isDragging)
+            {
+                return;
+            }
+
+        }
+
+        public void OnPointerMove(Vector3 position)
+        {
+            Debug.Log(position);
+        }
+
         private void Awake()
         {
-            rectTransform = GetComponent<RectTransform>();
             monkeyImage = GetComponent<Image>();
             monkeyImage.sprite = spriteToSet;
-            originalPosition = rectTransform.localPosition;
+            rectTransform = GetComponent<RectTransform>();
+            canvasGroup = GetComponent<CanvasGroup>();
+            originalPosition = rectTransform.position;
             originalAnchoredPosition = rectTransform.anchoredPosition;
         }
 
-        public void OnPointerDown(PointerEventData eventData) => monkeyImage.color = new Color(1, 1, 1, 0.6f);
 
         public void OnDrag(PointerEventData eventData)
         {
+            transform.position = Input.mousePosition;
             rectTransform.anchoredPosition += eventData.delta;
-            owner.MonkeyDraggedAt(eventData.position);
+            owner.MonkeyDraggedAt(rectTransform.position);
         }
+
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            ResetMonkeyImage();
+            ResetMonkey();
             owner.MonkeyDroppedAt(eventData.position);
         }
 
-        private void ResetMonkeyImage()
+        private void ResetMonkey()
         {
             monkeyImage.color = new Color(1, 1, 1, 1f);
+            rectTransform.position = originalPosition;
             rectTransform.anchoredPosition = originalAnchoredPosition;
-            rectTransform.localPosition = originalPosition;
             GetComponent<LayoutElement>().enabled = false;
             GetComponent<LayoutElement>().enabled = true;
+        }
+
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            monkeyImage.color = new Color(1, 1, 1, 0.6f);
         }
     }
 }

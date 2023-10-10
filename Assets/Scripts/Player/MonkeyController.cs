@@ -20,7 +20,7 @@ namespace ServiceLocator.Player
             monkeyView = Object.Instantiate(monkeyScriptableObject.Prefab);
             monkeyView.SetController(this);
             monkeyView.SetTriggerRadius(monkeyScriptableObject.Range);
-            
+
             this.monkeyScriptableObject = monkeyScriptableObject;
             this.projectilePool = projectilePool;
             bloonsInRange = new List<BloonController>();
@@ -45,7 +45,7 @@ namespace ServiceLocator.Player
 
         public void UpdateMonkey()
         {
-            if(bloonsInRange.Count > 0)
+            if (bloonsInRange.Count > 0)
             {
                 RotateTowardsTarget(bloonsInRange[0]);
                 ShootAtTarget(bloonsInRange[0]);
@@ -62,7 +62,7 @@ namespace ServiceLocator.Player
         private void ShootAtTarget(BloonController targetBloon)
         {
             attackTimer -= Time.deltaTime;
-            if(attackTimer <= 0)
+            if (attackTimer <= 0)
             {
                 ProjectileController projectile = projectilePool.GetProjectile(monkeyScriptableObject.projectileType);
                 projectile.SetPosition(monkeyView.transform.position);
